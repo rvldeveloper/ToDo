@@ -11,14 +11,20 @@ import {
 } from "@react-navigation/native"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { StackScreenProps } from "@react-navigation/stack"
+import { translate } from "../i18n"
 import { observer } from "mobx-react-lite"
 import React from "react"
 import { useColorScheme } from "react-native"
+import { TaskHeaderIcon } from "../components/TaskHeaderIcon"
 import Config from "../config"
 import {
   WelcomeScreen,
 } from "../screens"
+import { AddTaskScreen } from "../screens/AddTaskScreen"
+import { TasksScreen } from "../screens/TasksScreen"
+import { ViewTaskScreen } from "../screens/ViewTaskScreen"
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
+import { TaskTabNavigator } from "./TaskTabNavigator"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -35,7 +41,13 @@ import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
  */
 export type AppStackParamList = {
   Welcome: undefined
-  // 🔥 Your screens go here
+  TaskTab: undefined
+  AddTask: undefined
+  TaskList: undefined
+  ViewTask: {
+    task: undefined
+  }
+  Progress: undefined
 }
 
 /**
@@ -49,7 +61,6 @@ export type AppStackScreenProps<T extends keyof AppStackParamList> = StackScreen
   T
 >
 
-// Documentation: https://reactnavigation.org/docs/stack-navigator/
 const Stack = createNativeStackNavigator<AppStackParamList>()
 
 const AppStack = observer(function AppStack() {
@@ -58,13 +69,47 @@ const AppStack = observer(function AppStack() {
       screenOptions={{ headerShown: false }}
     >
           <Stack.Screen name="Welcome" component={WelcomeScreen} />
-      {/** 🔥 Your screens go here */}
+          <Stack.Screen name="TaskTab" component={TaskTabNavigator} />
     </Stack.Navigator>
   )
 })
 
+/**
+ * This are the stacked screens when "Tasks" tab is selected
+ * from the TaskTabNavigator.
+ * @returns A stack navigator
+ */
+export function TaskNavigator() {
+  return (
+    <Stack.Navigator
+      screenOptions={{ headerShown: true }}
+    >
+      <Stack.Screen 
+        name="TaskList" 
+        component={TasksScreen} 
+        options={{ 
+          headerShown: true, 
+          headerBackVisible: false,
+          title: translate("appNavigator.taskListScreenTitle"), 
+          headerRight: () => <TaskHeaderIcon/> }} />
+      <Stack.Screen 
+        name="AddTask" 
+        component={AddTaskScreen} 
+        options={{ title: translate("appNavigator.addTaskScreenTitle") }} />
+      <Stack.Screen 
+        name="ViewTask" 
+        component={ViewTaskScreen} 
+        options={{ title: translate("appNavigator.viewTaskScreenTitle") }} />
+    </Stack.Navigator>
+  )
+}
+
 interface NavigationProps extends Partial<React.ComponentProps<typeof NavigationContainer>> {}
 
+/**
+ * This is the starting point of the screen routes for this app.
+ * @returns The root app navigator
+ */
 export const AppNavigator = observer(function AppNavigator(props: NavigationProps) {
   const colorScheme = useColorScheme()
 

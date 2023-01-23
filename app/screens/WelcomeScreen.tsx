@@ -1,38 +1,52 @@
 import { observer } from "mobx-react-lite"
 import React, { FC } from "react"
-import { Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
+import { TextStyle, View, ViewStyle } from "react-native"
 import {
+  Icon,
   Text,
 } from "../components"
-import { isRTL } from "../i18n"
+import { AppStackScreenProps } from "../navigators"
 import { colors, spacing } from "../theme"
 import { useSafeAreaInsetsStyle } from "../utils/useSafeAreaInsetsStyle"
 
-const welcomeLogo = require("../../assets/images/logo.png")
-const welcomeFace = require("../../assets/images/welcome-face.png")
+interface WelcomeScreenProps extends AppStackScreenProps<"Welcome"> { }
 
-
+/**
+ * Screen that is inteded to be shown during initial app load.
+ */
 export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeScreen(
+  _props,
 ) {
 
+  const { navigation } = _props
+
   const $bottomContainerInsets = useSafeAreaInsetsStyle(["bottom"])
+
+  function goNext() {
+    navigation.navigate("TaskTab")
+  }
 
   return (
     <View style={$container}>
       <View style={$topContainer}>
-        <Image style={$welcomeLogo} source={welcomeLogo} resizeMode="contain" />
         <Text
           testID="welcome-heading"
           style={$welcomeHeading}
-          tx="welcomeScreen.readyForLaunch"
+          tx="welcomeScreen.appTitle"
           preset="heading"
         />
-        <Text tx="welcomeScreen.exciting" preset="subheading" />
-        <Image style={$welcomeFace} source={welcomeFace} resizeMode="contain" />
+        <Text 
+          tx="welcomeScreen.subTitle" 
+          preset="subheading" />
       </View>
 
       <View style={[$bottomContainer, $bottomContainerInsets]}>
         <Text tx="welcomeScreen.postscript" size="md" />
+        <Icon 
+          icon="caretRight" 
+          size={35} 
+          containerStyle={$demoIconContainer} 
+          onPress={goNext} />
       </View>
     </View>
   )
@@ -52,6 +66,7 @@ const $topContainer: ViewStyle = {
 }
 
 const $bottomContainer: ViewStyle = {
+  flexDirection: "row",
   flexShrink: 1,
   flexGrow: 0,
   flexBasis: "43%",
@@ -59,23 +74,14 @@ const $bottomContainer: ViewStyle = {
   borderTopLeftRadius: 16,
   borderTopRightRadius: 16,
   paddingHorizontal: spacing.large,
-  justifyContent: "space-around",
-}
-const $welcomeLogo: ImageStyle = {
-  height: 88,
-  width: "100%",
-  marginBottom: spacing.huge,
-}
-
-const $welcomeFace: ImageStyle = {
-  height: 169,
-  width: 269,
-  position: "absolute",
-  bottom: -47,
-  right: -80,
-  transform: [{ scaleX: isRTL ? -1 : 1 }],
+  justifyContent: "space-between",
+  alignItems: "center",
 }
 
 const $welcomeHeading: TextStyle = {
   marginBottom: spacing.medium,
+}
+
+const $demoIconContainer: ViewStyle = {
+  padding: spacing.extraSmall,
 }

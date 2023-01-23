@@ -107,6 +107,10 @@ export const iconRegistry = {
   slack: require("../../assets/icons/slack.png"),
   view: require("../../assets/icons/view.png"),
   x: require("../../assets/icons/x.png"),
+  highPriority: require("../../assets/icons/high-priority.png"),
+  mediumPriority: require("../../assets/icons/medium-priority.png"),
+  lowPriority: require("../../assets/icons/low-priority.png"),
+  sort: require("../../assets/icons/sort.png"),
 }
 
 const $imageStyle: ImageStyle = {
